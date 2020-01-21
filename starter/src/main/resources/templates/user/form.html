@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--<a>Form Test.</a>-->
+<div th:replace="~{fragments/header::header}"></div>
+<h3 th:text = "${userModel.title}"></h3>
+<form action="/users" th:action="@{/users}" method="POST" th:object="${userModel.user}">
+    <input type="hidden" name="id" th:value="*{id}">
+    Name : <br>
+    <input type="text" name="name" th:value="*{name}">
+    <br>
+    Email: <br>
+    <input type="text" name="email" th:value="*{email}">
+    <input type="submit">
+</form>
+<div th:replace="~{fragments/footer::footer}"></div>
+</body>
+</html>
