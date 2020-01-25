@@ -2,6 +2,7 @@ package com.amazon.starter.controller;
 
 import com.amazon.starter.domain.User;
 import com.amazon.starter.repository.UserRepository;
+import com.amazon.starter.repository.dbRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,9 @@ public class UserContrller {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private dbRepository dbRepository;
 
     @GetMapping
     public ModelAndView list(Model model){
