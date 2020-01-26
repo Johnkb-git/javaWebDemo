@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -23,7 +25,17 @@ public class UserRepositoryImpl implements UserRepository{
     @Autowired
     private dbRepository dbRepository;
     private static AtomicLong counter = new AtomicLong();
+//    private List<User> userList = new ArrayList<>();
     private final ConcurrentMap<Long, User> userMap = new ConcurrentHashMap<>();//线程安全
+
+    @PostConstruct
+    public void getDataFromMysql() throws NullPointerException{
+        List<User> userList = dbRepository.findAll();
+        for (User user:userList){
+            userMap.put(user.getId(),user);
+        }
+        counter = new AtomicLong((long)userList.get(userList.size()-1).getId());
+    }
 
     @Override
     public User saveOrUpdateUser(User user) {
@@ -32,23 +44,25 @@ public class UserRepositoryImpl implements UserRepository{
             id = counter.incrementAndGet();
             user.setId(id);
         }
-        this.userMap.put(id,user);
+        userMap.put(id,user);
         dbRepository.save(user);
         return user;
     }
 
     @Override
     public void deleteUser(Long id) {
-        this.userMap.remove(id);
+        dbRepository.deleteById(id);
+        userMap.remove(id);
     }
 
     @Override
     public User getUserById(Long id) {
-        return this.userMap.get(id);
+        Optional<User> user = dbRepository.findById(id);
+        return user.get();
     }
 
     @Override
     public List<User> listUsers() {
-        return new ArrayList<User>(this.userMap.values());
+        return dbRepository.findAll();
     }
 }
